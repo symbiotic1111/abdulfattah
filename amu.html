@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMU Class 11th ENTRANCE Examination 2025 - Rank Predictor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f5ff;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #103c7a;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-width: 100px;
+            height: auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #103c7a;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #103c7a;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0d2f5e;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f1ff;
+            border-radius: 8px;
+            border-left: 5px solid #103c7a;
+            display: none;
+        }
+        .result h2 {
+            margin-top: 0;
+            color: #103c7a;
+            font-size: 20px;
+        }
+        .result-item {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .result-rank {
+            font-size: 24px;
+            font-weight: bold;
+            color: #103c7a;
+        }
+        .note {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+        .waiting-list {
+            margin-top: 15px;
+        }
+        .error {
+            color: #d9534f;
+            display: none;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AMU Class 11th ENTRANCE Examination 2025</h1>
+        <div class="logo">
+            <img src="/api/placeholder/100/100" alt="AMU Logo">
+        </div>
+        
+        <form id="rankForm">
+            <div class="form-group">
+                <label for="name">Student Name:</label>
+                <input type="text" id="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="rollNumber">Roll Number:</label>
+                <input type="text" id="rollNumber" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="marks">Marks Obtained:</label>
+                <input type="number" id="marks" min="0" max="100" required>
+                <div id="marksError" class="error">Please enter marks between 0 and 100.</div>
+            </div>
+            
+            <button type="submit" id="submitBtn">Calculate Expected Rank</button>
+        </form>
+        
+        <div id="result" class="result">
+            <h2>Rank Prediction Results</h2>
+            <div class="result-item">Name: <span id="resultName"></span></div>
+            <div class="result-item">Roll Number: <span id="resultRoll"></span></div>
+            <div class="result-item">Marks: <span id="resultMarks"></span></div>
+            <div class="result-item">Expected Rank: <span id="resultRank" class="result-rank"></span></div>
+            <div class="waiting-list">
+                <div class="result-item">Expected Waiting List Rank: <span id="resultWaitingRank" class="result-rank"></span></div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p>Based on past year data patterns and the correlation between marks and ranks.</p>
+            <p>Total seats: 380</p>
+            <p>This is only a prediction tool and actual ranks may vary.</p>
+        </div>
+    </div>
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get form element
+            const form = document.getElementById('rankForm');
+            
+            // Add submit event listener
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateRank();
+            });
+            
+            // Also add click event to button as a backup
+            document.getElementById('submitBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                calculateRank();
+            });
+            
+            // Function to calculate and display rank
+            function calculateRank() {
+                // Get input values
+                const name = document.getElementById('name').value.trim();
+                const rollNumber = document.getElementById('rollNumber').value.trim();
+                const marksInput = document.getElementById('marks').value.trim();
+                const marks = parseFloat(marksInput);
+                
+                // Validate inputs
+                if (name === '') {
+                    alert('Please enter student name');
+                    return;
+                }
+                
+                if (rollNumber === '') {
+                    alert('Please enter roll number');
+                    return;
+                }
+                
+                // Validate marks
+                if (marksInput === '' || isNaN(marks) || marks < 0 || marks > 100) {
+                    document.getElementById('marksError').style.display = 'block';
+                    return;
+                } else {
+                    document.getElementById('marksError').style.display = 'none';
+                }
+                
+                // Calculate expected rank based on the given data points
+                // Data Point 1: 66 marks -> Rank 71
+                // Data Point 2: 60 marks -> Rank 150
+                let expectedRank;
+                
+                if (marks >= 66) {
+                    // For marks above 66, we'll use the approximate rate of 50 students per mark
+                    expectedRank = Math.max(1, Math.round(71 - ((marks - 66) * 50)));
+                } else if (marks <= 60) {
+                    // For marks below 60, we'll continue the trend with 50 students per mark
+                    expectedRank = Math.round(150 + ((60 - marks) * 50));
+                } else {
+                    // Between 60 and 66 marks, we'll use linear interpolation
+                    // (66 marks -> rank 71) and (60 marks -> rank 150)
+                    // Slope = (150 - 71) / (60 - 66) = 79 / -6 = -13.17 ranks per mark
+                    expectedRank = Math.round(71 + ((66 - marks) * 13.17));
+                }
+                
+                // Round to integer and ensure minimum rank is 1
+                expectedRank = Math.max(1, Math.round(expectedRank));
+                
+                // Calculate waiting list rank (continue after 380 seats)
+                let waitingListRank = expectedRank - 380;
+                waitingListRank = waitingListRank > 0 ? waitingListRank : "Not in waiting list";
+                
+                // Display results
+                document.getElementById('resultName').textContent = name;
+                document.getElementById('resultRoll').textContent = rollNumber;
+                document.getElementById('resultMarks').textContent = marks;
+                document.getElementById('resultRank').textContent = expectedRank;
+                document.getElementById('resultWaitingRank').textContent = waitingListRank;
+                document.getElementById('result').style.display = 'block';
+                
+                // Scroll to results
+                document.getElementById('result').scrollIntoView({behavior: 'smooth'});
+            }
+        });
+    </script>
+</body>
+</html>
